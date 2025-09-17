@@ -3860,21 +3860,27 @@ DATA_029D5E:
 
 RumbleRead:
 
-	ldy.b RumbleSpot
-	bne continuerumb
-	rtl
-continuerumb:
-	dey
-	lda [$60],y
-	cmp #$FE
-	bne continuerumb2
-	stz.b RumbleSpot
-	rtl
-continuerumb2:
+	ldy.b RumbleSpot		;load rumble position pointer
+	bne continuerumb		;if its not 0, continue to continuerumb
+	stz.b RumbleStrength		;otherwise, zero rumble strength
+	bra	continuerumb3		;continue stuff
+continuerumb:				;if it was not 0, we do this
+	dey						;decrease y
+	lda [$60],y				;load the value
+	cmp #$FE				;if its not FE, we store the actual rumble value from the table at continuerumb2
+	bne continuerumb2		
+	stz.b RumbleSpot		;if it IS fe, we zero the position pointer
+	stz.b RumbleStrength		;we zero the strength
+	bra continuerumb3		;and we proceed to turn off the motors
+;	rtl
+continuerumb2:				;if it wasn't fe, we:
+	sta	RumbleStrength		;store the strength
+	iny
+	iny
+	sty.b RumbleSpot			;increase pointer position
+	
+continuerumb3:
     ; HACK: apparently this is needed to work on hardware?
-	iny
-	iny
-	sty.b RumbleSpot
     LDA #$01 
 	STA $4016
     NOP

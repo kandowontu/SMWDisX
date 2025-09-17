@@ -7328,8 +7328,25 @@ BooBossPals:
 
 
 
-test1:
-	db $01, $02, $13, $24, $33, $42, $31, $20, $10, $FE
+mushroomrumble:
+	db $01, $01, $02, $02, $13, $13, $24, $24, $33, $33, $42, $42, $31, $31, $20, $20, $10, $10, $00, $00, $01, $01, $02, $02, $13, $13, $24, $24, $33, $33, $42, $42, $31, $31, $20, $20, $10, $10, $00, $00, $01, $01, $02, $02, $13, $13, $24, $24, $33, $33, $42, $42, $31, $31, $20, $20, $10, $10, $FE
+
+piperumble:
+	db $10, $10, $20, $20, $31, $42, $33, $24, $24, $13, $13, $02, $02, $01, $01, $00, $00, $10, $10, $20, $20, $31, $42, $33, $24, $24, $13, $13, $02, $02, $01, $01, $00, $00, $10, $10, $20, $20, $31, $42, $33, $24, $24, $13, $13, $02, $02, $01, $01, $FE
+
+dragoncoinrumble:
+	db $11, $11, $22, $22, $33, $44, $00, $11, $11, $22, $22, $33, $44, $FE
+	
+itemblockrumble:
+	db $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $FE
+
+
+
+QuickRumble:
+	db $11, $22, $33, $44, $44, $33, $22, $11, $FE
+
+DefaultRumble:
+	db $11, $11, $22, $33, $33, $33, $44, $44, $33, $33, $22, $22, $11, $11, $FE
 
 exitrumble:
 	db $FE
@@ -7364,16 +7381,16 @@ exitr2:
 
 SFXJumpTable2:
 	dw	exitrumble		;0 no sfx
-	dw	exitrumble		;SFX_BONK = 1
+	dw	DefaultRumble		;SFX_BONK = 1
 	dw	exitrumble		;SFX_SPLAT = 2
-	dw	exitrumble		;SFX_KICK = 3
-	dw	exitrumble		;SFX_PIPE = 4
+	dw	DefaultRumble		;SFX_KICK = 3
+	dw	piperumble		;SFX_PIPE = 4
 	dw	exitrumble		;SFX_MIDWAY = 5
-	dw	exitrumble		;SFX_GULP = 6
+	dw	QuickRumble		;SFX_GULP = 6
 	dw	exitrumble		;SFX_BONES = 7
 	dw	exitrumble		;SFX_SPINKILL = 8
 	dw	exitrumble		;SFX_CAPE = 9
-	dw	exitrumble		;SFX_MUSHROOM = 10
+	dw	mushroomrumble		;SFX_MUSHROOM = 10
 	dw	exitrumble		;SFX_SWITCH = 11
 	dw	exitrumble		;SFX_ITEMGOAL = 12
 	dw	exitrumble		;SFX_FEATHER = 13
@@ -7382,18 +7399,19 @@ SFXJumpTable2:
 	dw	exitrumble		;SFX_MAGIC = 16
 	dw	exitrumble		;SFX_PAUSE = 17
 	dw	exitrumble		;SFX_UNPAUSE = 18
-	dw	test1		;SFX_STOMP1 = 19
-	dw	exitrumble		;SFX_STOMP2 = 20
-	dw	exitrumble		;SFX_STOMP3 = 21
-	dw	exitrumble		;SFX_STOMP4 = 22
-	dw	exitrumble		;SFX_STOMP5 = 23
-	dw	exitrumble		;SFX_STOMP6 = 24
-	dw	exitrumble		;SFX_STOMP7 = 25
+	dw	DefaultRumble		;SFX_STOMP1 = 19
+	dw	DefaultRumble		;SFX_STOMP2 = 20
+	dw	DefaultRumble		;SFX_STOMP3 = 21
+	dw	DefaultRumble		;SFX_STOMP4 = 22
+	dw	DefaultRumble		;SFX_STOMP5 = 23
+	dw	DefaultRumble		;SFX_STOMP6 = 24
+	dw	DefaultRumble		;SFX_STOMP7 = 25
 	dw	exitrumble		;SFX_GRINDER = 26
-	dw	exitrumble		;SFX_DRAGONCOIN = 28
+	dw	exitrumble		;nothing?? = 27
+	dw	dragoncoinrumble		;SFX_DRAGONCOIN = 28		;not working?!
 	dw	exitrumble		;SFX_PBALLOON = 30
 	dw	exitrumble		;SFX_BOSSDEAD = 31
-	dw	exitrumble		;SFX_SPIT = 32
+	dw	QuickRumble		;SFX_SPIT = 32
 	dw	exitrumble		;SFX_RUMBLINGON = 33
 	dw	exitrumble		;SFX_RUMBLINGOFF = 34
 	dw	exitrumble		;SFX_FALL = 35
@@ -7422,6 +7440,12 @@ SetRumbleStuff3:
 	plb
 	lda SPCIO3
 	beq exitr3
+	cmp #11
+	beq exitr3
+	cmp #12
+	beq exitr3
+	cmp #14
+	beq exitr3
 	phx
 	asl a
 	tax
@@ -7442,18 +7466,19 @@ exitr3:
 SFXJumpTable3:
 	dw	exitrumble		;0 no sfx
 	dw	exitrumble		;SFX_COIN = 1
-	dw	exitrumble		;SFX_ITEMBLOCK = 2
+	dw	itemblockrumble		;SFX_ITEMBLOCK = 2
 	dw	exitrumble		;SFX_VINEBLOCK = 3
 	dw	exitrumble		;SFX_SPIN = 4
 	dw	exitrumble		;SFX_1UP = 5
-	dw	exitrumble		;SFX_FIREBALL = 6
+	dw	QuickRumble		;SFX_FIREBALL = 6
 	dw	exitrumble		;SFX_SHATTER = 7
 	dw	exitrumble		;SFX_SPRING = 8
 	dw	exitrumble		;SFX_KAPOW = 9
 	dw	exitrumble		;SFX_EGGHATCH = 10
-	dw	exitrumble		;SFX_ITEMRESERVED = 11
-	dw	exitrumble		;SFX_ITEMDEPLOYED = 12
-	dw	exitrumble		;SFX_SCREENSCROLL = 14
+	dw	exitrumble		;SFX_ITEMRESERVED = 11	;skipped
+	dw	exitrumble		;SFX_ITEMDEPLOYED = 12	;skipped
+	dw	exitrumble		;nothing? = 13	;skipped
+	dw	exitrumble		;SFX_SCREENSCROLL = 14	;skipped
 	dw	exitrumble		;SFX_DOOROPEN = 15
 	dw	exitrumble		;SFX_DOORCLOSE = 16
 	dw	exitrumble		;SFX_DRUMROLLSTART = 17
