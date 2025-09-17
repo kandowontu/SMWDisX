@@ -211,7 +211,7 @@ I_NMI:                                        ; NMI routine.
     STA.W LastUsedMusic                       ;| Keep the current sound playing, then mirror and clear $1DFB.
     STZ.W SPCIO2                              ;/
  ++ jsl SetRumbleStuff0
-	jsl SetRumbleStuff1
+	;jsl SetRumbleStuff1
 	jsl SetRumbleStuff3
 	LDA.W SPCIO0                              ;\ 
     STA.W HW_APUIO0                           ;|
