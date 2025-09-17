@@ -3857,106 +3857,80 @@ Return029D5D:
 DATA_029D5E:
     db $00,$01,$02,$03,$02,$03,$02,$03
     db $03,$02,$03,$02,$03,$02,$01,$00
-UnusedExSprDispX:
-    db $10,$F8,$03,$10,$F8,$03,$10,$F0
-    db $FF,$10,$F0,$FF
 
-UnusedExSprDispY:
-    db $02,$02,$EE,$02,$02,$EE,$FE,$FE
-    db $E6,$FE,$FE,$E6
+RumbleRead:
+    LDA.B RumbleSpot
+	BEQ rumbleOff
+;    DEC.B RumbleTime
+    BRA continue
 
-UnusedExSprTiles:
-    db $B3,$B3,$B1,$B2,$B2,$B0,$8E,$8E
-    db $A8,$8C,$8C,$88
+rumbleOff:
+    STZ.B RumbleStrength		;21
 
-UnusedExSprGfxProp:
-    db $69,$29,$29
+continue:
+    ; HACK: apparently this is needed to work on hardware?
+    LDA #$01 
+	STA $4016
+    NOP
+    STZ $4016
+    NOP
+    ; Read 16 Controller Bits
+    LDA #$0F
 
-UnusedExSprTileSize:
-    db $00,$00,$02,$02
+readJoy2:
+    ; Controller I
+    BIT $4016
+    DEC 
+	BPL readJoy2
 
-  - STZ.W ExtSpriteNumber,X                   ; Clear extended sprite
-    RTS
+    ; Write 01110010 to the Controller Port
+    LDA #$40
+    STZ $4201
+	BIT $4016  ; 0
+    STA $4201
+	BIT $4016 ; 1
+    BIT $4016          ; 1 (just strobing works: the IO port already has 1)
+    BIT $4016          ; 1
+    STZ $4201
+	BIT $4016  ; 0
+    BIT $4016          ; 0
+    STA $4201
+	BIT $4016 ; 1
+    STZ $4201
+	BIT $4016  ; 0
+
+    ; Now we write the rumble intensity: rrrrllll (right and left motors)
+    LDA.B RumbleStrength
+	LSR ; -7654321, C <- 0
+    STA $4201
+	BIT $4016     ; bit7
+    ROL                    ; 76543210
+    STA $4201
+	BIT $4016     ; bit6
+    ASL                    ; 6543210-
+    STA $4201
+	BIT $4016     ; bit5
+    ASL                    ; 543210--
+    STA $4201
+	BIT $4016     ; bit4
+    ASL                    ; 43210---
+    STA $4201
+	BIT $4016     ; bit3
+    ASL                    ; 3210----
+    STA $4201
+	BIT $4016     ; bit2
+    ASL                    ; 210-----
+    STA $4201
+	BIT $4016     ; bit1
+    ASL                    ; 10------
+    STA $4201
+	BIT $4016     ; bit0
+	LDA #$FF
+    STA $4201	
+	rtl
 
 UnusedExtendedSpr:
-    JSR CODE_02A3F6
-    LDY.W ExtSpriteXSpeed,X
-    LDA.W SpriteStatus,Y
-    CMP.B #$08
-    BNE -
-    LDA.W ExtSpriteMisc176F,X
-    BEQ -
-    LSR A
-    LSR A
-    NOP
-    NOP
-    TAY
-    LDA.W DATA_029D5E,Y
-    STA.B _F
-    ASL A
-    ADC.B _F
-    STA.B _2
-    LDA.W ExtSpriteMisc1765,X
-    CLC
-    ADC.B _2
-    TAY
-    STY.B _3
-    LDA.W ExtSpriteXPosLow,X
-    CLC
-    ADC.W UnusedExSprDispX,Y
-    SEC
-    SBC.B Layer1XPos
-    STA.B _0
-    LDA.W ExtSpriteYPosLow,X
-    CLC
-    ADC.W UnusedExSprDispY,Y
-    SEC
-    SBC.B Layer1YPos
-    STA.B _1
-    LDY.W DATA_02A153,X
-    CMP.B #$F0
-    BCS CODE_029E39
-    STA.W OAMTileYPos,Y
-    LDA.B _0
-    CMP.B #$10
-    BCC CODE_029E39
-    CMP.B #$F0
-    BCS CODE_029E39
-    STA.W OAMTileXPos,Y
-    LDA.W ExtSpriteMisc1765,X
-    TAX
-    %LorW_X(LDA,UnusedExSprGfxProp)
-    STA.W OAMTileAttr,Y
-    LDX.B _3
-    %LorW_X(LDA,UnusedExSprTiles)
-    STA.W OAMTileNo,Y
-    TYA
-    LSR A
-    LSR A
-    TAY
-    LDX.B _F
-    %LorW_X(LDA,UnusedExSprTileSize)
-    STA.W OAMTileSize,Y
-    LDX.W CurSpriteProcess                    ; X = Sprite index
-    LDA.B _0
-    SEC
-    SBC.B PlayerXPosScrRel
-    CLC
-    ADC.B #$04
-    CMP.B #$08
-    BCS +
-    LDA.B _1
-    SEC
-    SBC.B PlayerYPosScrRel
-    SEC
-    SBC.B #$10
-    CLC
-    ADC.B #$10
-    CMP.B #$10
-    BCS +
-    JMP CODE_02A469
 
-  + RTS
 
 
 DATA_029E36:

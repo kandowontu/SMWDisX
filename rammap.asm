@@ -507,7 +507,8 @@ LastScreenVert: skip 1
 ; === $7E0060 ===
 ; 4 bytes
 ; unused
-WRAM_0060: skip 4
+RumblePointer: skip 3
+RumbleSpot: skip 1
 
 ; === $7E0064 ===
 ; 1 byte
@@ -712,7 +713,7 @@ LevelIsSlippery: skip 1
 ; === $7E0087 ===
 ; 1 byte
 ; unused
-WRAM_0087: skip 1
+RumbleStrength: skip 1
 
 ; === $7E0088 ===
 ; 1 byte

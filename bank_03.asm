@@ -7321,8 +7321,179 @@ MagiKoopaPals:
 BooBossPals:
     %incpal("col/misc/the_big_boo.pal")
 
-    %insert_empty($5FE,$5FE,$5FE,$5FE,$5FE)
+;    %insert_empty($5FE,$5FE,$5FE,$5FE,$5FE)
 
+
+
+
+
+
+test1:
+	db $00, $11, $22
+
+
+
+
+
+SetRumbleStuff2:
+
+	phb
+	lda #$03
+	pha
+	plb
+	lda SPCIO0
+	phx
+	asl a
+	tax
+	rep #$20
+	lda.W SFXJumpTable2,x
+	sta	RumblePointer
+	sep #$20
+	lda #SFXJumpTable2>>16
+	sta RumblePointer+2
+	lda #1
+	sta	RumbleSpot
+	plx
+	plb
+	rtl
+
+
+SFXJumpTable2:
+	dw	exitrumble		;0 no sfx
+	dw	exitrumble		;SFX_BONK = 1
+	dw	exitrumble		;SFX_SPLAT = 2
+	dw	exitrumble		;SFX_KICK = 3
+	dw	exitrumble		;SFX_PIPE = 4
+	dw	exitrumble		;SFX_MIDWAY = 5
+	dw	exitrumble		;SFX_GULP = 6
+	dw	exitrumble		;SFX_BONES = 7
+	dw	exitrumble		;SFX_SPINKILL = 8
+	dw	exitrumble		;SFX_CAPE = 9
+	dw	exitrumble		;SFX_MUSHROOM = 10
+	dw	exitrumble		;SFX_SWITCH = 11
+	dw	exitrumble		;SFX_ITEMGOAL = 12
+	dw	exitrumble		;SFX_FEATHER = 13
+	dw	exitrumble		;SFX_SWIM = 14
+	dw	exitrumble		;SFX_FLYHIT = 15
+	dw	exitrumble		;SFX_MAGIC = 16
+	dw	exitrumble		;SFX_PAUSE = 17
+	dw	exitrumble		;SFX_UNPAUSE = 18
+	dw	test1		;SFX_STOMP1 = 19
+	dw	exitrumble		;SFX_STOMP2 = 20
+	dw	exitrumble		;SFX_STOMP3 = 21
+	dw	exitrumble		;SFX_STOMP4 = 22
+	dw	exitrumble		;SFX_STOMP5 = 23
+	dw	exitrumble		;SFX_STOMP6 = 24
+	dw	exitrumble		;SFX_STOMP7 = 25
+	dw	exitrumble		;SFX_GRINDER = 26
+	dw	exitrumble		;SFX_DRAGONCOIN = 28
+	dw	exitrumble		;SFX_PBALLOON = 30
+	dw	exitrumble		;SFX_BOSSDEAD = 31
+	dw	exitrumble		;SFX_SPIT = 32
+	dw	exitrumble		;SFX_RUMBLINGON = 33
+	dw	exitrumble		;SFX_RUMBLINGOFF = 34
+	dw	exitrumble		;SFX_FALL = 35
+	dw	exitrumble		;SFX_NOTICEMESENPAI = 36 ; unused sfx that doesn't actually exist
+	dw	exitrumble		;SFX_BLARGG = 37
+	dw	exitrumble		;SFX_FIREWORKFIRE1 = 38
+	dw	exitrumble		;SFX_FIREWORKBANG1 = 39
+	dw	exitrumble		;SFX_FIREWORKFIRE2 = 40
+	dw	exitrumble		;SFX_FIREWORKBANG2 = 41
+	dw	exitrumble		;SFX_PEACHHELP = 42
+
+
+QuickRumble1:
+
+	plx
+	rtl
+
+
+
+
+
+SetRumbleStuff3:
+	phb
+	lda #$03
+	pha
+	plb
+	lda SPCIO3
+	phx
+	asl a
+	tax
+	rep #$20
+	lda.W SFXJumpTable3,x
+	sta	RumblePointer
+	sep #$20
+	lda.B #SFXJumpTable3>>16
+	sta RumblePointer+2
+	lda #1
+	sta	RumbleSpot
+	plx
+	plb
+	rtl
+
+
+SFXJumpTable3:
+	dw	exitrumble		;0 no sfx
+	dw	exitrumble		;SFX_COIN = 1
+	dw	exitrumble		;SFX_ITEMBLOCK = 2
+	dw	exitrumble		;SFX_VINEBLOCK = 3
+	dw	exitrumble		;SFX_SPIN = 4
+	dw	exitrumble		;SFX_1UP = 5
+	dw	exitrumble		;SFX_FIREBALL = 6
+	dw	exitrumble		;SFX_SHATTER = 7
+	dw	exitrumble		;SFX_SPRING = 8
+	dw	exitrumble		;SFX_KAPOW = 9
+	dw	exitrumble		;SFX_EGGHATCH = 10
+	dw	exitrumble		;SFX_ITEMRESERVED = 11
+	dw	exitrumble		;SFX_ITEMDEPLOYED = 12
+	dw	exitrumble		;SFX_SCREENSCROLL = 14
+	dw	exitrumble		;SFX_DOOROPEN = 15
+	dw	exitrumble		;SFX_DOORCLOSE = 16
+	dw	exitrumble		;SFX_DRUMROLLSTART = 17
+	dw	exitrumble		;SFX_DRUMROLLEND = 18
+	dw	exitrumble		;SFX_YOSHIHURT = 19
+	dw	exitrumble		;SFX_NEWLEVEL = 21
+	dw	exitrumble		;SFX_CASTLECRUSH = 22
+	dw	exitrumble		;SFX_FIRESPIT = 23
+	dw	exitrumble		;SFX_THUNDER = 24
+	dw	exitrumble		;SFX_CLAP = 25
+	dw	exitrumble		;SFX_CUTSCENEBOMB = 26
+	dw	exitrumble		;SFX_CUTSCENEFUSE = 27
+	dw	exitrumble		;SFX_SWITCHBLOCK = 28
+	dw	exitrumble		;SFX_WHISTLE = 30
+	dw	exitrumble		;SFX_YOSHI = 31
+	dw	exitrumble		;SFX_BOSSINLAVA = 32
+	dw	exitrumble		;SFX_YOSHITONGUE = 33
+	dw	exitrumble		;SFX_MESSAGE = 34
+	dw	exitrumble		;SFX_BEEP = 35
+	dw	exitrumble		;SFX_RUNNINGOUT = 36
+	dw	exitrumble		;SFX_YOSHISTOMP = 37
+	dw	exitrumble		;SFX_SWOOPER = 38
+	dw	exitrumble		;SFX_PODOBOO = 39
+	dw	exitrumble		;SFX_ENEMYHURT = 40
+	dw	exitrumble		;SFX_CORRECT = 41
+	dw	exitrumble		;SFX_WRONG = 42
+	dw	exitrumble		;SFX_FIREWORKFIRE3 = 43
+	dw	exitrumble		;SFX_FIREWORKBANG3 = 44
+	dw	exitrumble		;SFX_BOWSERFIRE1 = 45
+	dw	exitrumble		;SFX_BOWSERFIRE2 = 46
+	dw	exitrumble		;SFX_BOWSERFIRE3 = 47
+	dw	exitrumble		;SFX_BOWSERFIRE4 = 48
+	dw	exitrumble		;SFX_BOWSERFIRE5 = 49
+	dw	exitrumble		;SFX_BOWSERFIRE6 = 50
+	dw	exitrumble		;SFX_BOWSERFIRE7 = 51
+	dw	exitrumble		;SFX_BOWSERFIRE8 = 52
+
+
+
+
+exitrumble:
+	
+	plx
+	rtl
+	
+	
 GenTileFromSpr2:
     STA.B Map16TileGenerate                   ; $9C = tile to generate
     LDA.B SpriteXPosLow,X                     ; \ $9A = Sprite X position + #$08

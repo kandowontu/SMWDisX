@@ -45,7 +45,7 @@ DP2Sub2Level0FF:
 BonusGameLevel:
     incbin "lvl/obj/bonusgame.bin"
 UnusedGHExitLevel:
-    incbin "lvl/obj/unusedghexit1.bin"
+ ;   incbin "lvl/obj/unusedghexit1.bin"
 LarryIggyLevel:
     incbin "lvl/obj/iggylarryroom.bin"
 YSPLevel014:
@@ -158,7 +158,7 @@ DS2Level10B:
 DS2Sub1Level1C6:
     incbin "lvl/obj/1C6_DS2sub.bin"
 
-    %insert_empty($4A,$47,$47,$47,$47)
+ ;   %insert_empty($4A,$47,$47,$47,$47)
 
 VD1Level11A:
 if ver_is_japanese(!_VER)                     ;\======================= J =====================
@@ -245,7 +245,7 @@ SLLevel011:
 SLSub1Level0C6:
     incbin "lvl/obj/0C6_SLend.bin"
 
-    %insert_empty($69F,$69C,$69C,$69C,$69C)
+;    %insert_empty($69F,$69C,$69C,$69C,$69C)
 
 BB1Level00C:
     incbin "lvl/obj/00C_BB1main.bin"
@@ -340,4 +340,5 @@ CSSub4Level1EE:
 CSSub1Level1C0:
     incbin "lvl/obj/1C0_CSsub.bin"
 
-    %insert_empty($ACD,$AC7,$AC7,$AC7,$AC7)
+;    %insert_empty($ACD,$AC7,$AC7,$AC7,$AC7)
+

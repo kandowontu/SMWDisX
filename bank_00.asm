@@ -210,10 +210,12 @@ I_NMI:                                        ; NMI routine.
   + STA.W HW_APUIO2                           ;\ 
     STA.W LastUsedMusic                       ;| Keep the current sound playing, then mirror and clear $1DFB.
     STZ.W SPCIO2                              ;/
- ++ LDA.W SPCIO0                              ;\ 
+ ++ jsl SetRumbleStuff2
+	LDA.W SPCIO0                              ;\ 
     STA.W HW_APUIO0                           ;|
     LDA.W SPCIO1                              ;|
     STA.W HW_APUIO1                           ;|
+	jsl SetRumbleStuff3
     LDA.W SPCIO3                              ;| Update the remaining sound ports and clear mirrors.
     STA.W HW_APUIO3                           ;|
     STZ.W SPCIO0                              ;|
@@ -830,6 +832,9 @@ ControllerUpdate:                             ; Routine to read controller data 
     STA.B byetudlrFrame                       ;/
     LDA.W axlr0000P1Frame,X                   ;\ Set up $18.
     STA.B axlr0000Frame                       ;/
+	
+	jsl RumbleRead
+	
     RTS                                       ;
 
 InitM7BossOAM:                                ; Subroutine to initialize OAM in Roy/Morton/Ludwig's rooms.

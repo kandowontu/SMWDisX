@@ -19,6 +19,16 @@ macro BorW(cmd, addr)
     endif
 endmacro
 
+macro SetRumble(strength, time)
+	    php
+		sep #$20
+		lda #<strength>
+		sta RumbleStrength
+		lda #<time>
+		sta RumbleTime
+		plp
+endmacro
+
 ; instruction address mode $word if J, $byte otherwise
 macro WorB(cmd, addr)
     if ver_is_japanese(!_VER)
