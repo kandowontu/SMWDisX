@@ -210,13 +210,12 @@ I_NMI:                                        ; NMI routine.
   + STA.W HW_APUIO2                           ;\ 
     STA.W LastUsedMusic                       ;| Keep the current sound playing, then mirror and clear $1DFB.
     STZ.W SPCIO2                              ;/
- ++ jsl SetRumbleStuff0
-	jsl SetRumbleStuff1
-	jsl SetRumbleStuff3
+ ++ jsl SetRumbleStuff2
 	LDA.W SPCIO0                              ;\ 
     STA.W HW_APUIO0                           ;|
     LDA.W SPCIO1                              ;|
     STA.W HW_APUIO1                           ;|
+	jsl SetRumbleStuff3
     LDA.W SPCIO3                              ;| Update the remaining sound ports and clear mirrors.
     STA.W HW_APUIO3                           ;|
     STZ.W SPCIO0                              ;|

@@ -7337,32 +7337,32 @@ exitrumble:
 
 
 
-SetRumbleStuff0:
+SetRumbleStuff2:
 
 	phb
 	lda #$03
 	pha
 	plb
 	lda SPCIO0
-	beq exitr0
+	beq exitr2
 	phx
 	asl a
 	tax
 	rep #$20
-	lda.W SFXJumpTable0,x
+	lda.W SFXJumpTable2,x
 	sta	RumblePointer
 	sep #$20
-	lda #SFXJumpTable0>>16
+	lda #SFXJumpTable2>>16
 	sta RumblePointer+2
 	lda #1
 	sta	RumbleSpot
 	plx
-exitr0:
+exitr2:
 	plb
 	rtl
 
 
-SFXJumpTable0:
+SFXJumpTable2:
 	dw	exitrumble		;0 no sfx
 	dw	exitrumble		;SFX_BONK = 1
 	dw	exitrumble		;SFX_SPLAT = 2
@@ -7405,36 +7405,15 @@ SFXJumpTable0:
 	dw	exitrumble		;SFX_FIREWORKBANG2 = 41
 	dw	exitrumble		;SFX_PEACHHELP = 42
 
-SetRumbleStuff1:
-	phb
-	lda #$03
-	pha
-	plb
-	lda SPCIO1
-	beq exitr1
-	phx
-	asl a
-	tax
-	rep #$20
-	lda.W SFXJumpTable1,x
-	sta	RumblePointer
-	sep #$20
-	lda.B #SFXJumpTable1>>16
-	sta RumblePointer+2
-	lda #1
-	sta	RumbleSpot
+
+QuickRumble1:
+
 	plx
-exitr1:
-	plb
 	rtl
 
 
-SFXJumpTable1:
-	dw	exitrumble		;no sfx
-	dw	exitrumble		;SFX_JUMP = 1
-	dw	exitrumble		;SFX_YOSHIDRUMON = 2
-	dw	exitrumble		;SFX_YOSHIDRUMOFF = 3
-	dw	exitrumble		;SFX_BLOCKSNAKE = 4
+
+
 
 SetRumbleStuff3:
 	phb
