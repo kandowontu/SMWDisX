@@ -7329,9 +7329,11 @@ BooBossPals:
 
 
 test1:
-	db $00, $11, $22
+	db $01, $02, $13, $24, $33, $42, $31, $20, $10, $FE
 
-
+exitrumble:
+	db $FE
+	
 
 
 
@@ -7342,6 +7344,7 @@ SetRumbleStuff2:
 	pha
 	plb
 	lda SPCIO0
+	beq exitr2
 	phx
 	asl a
 	tax
@@ -7354,6 +7357,7 @@ SetRumbleStuff2:
 	lda #1
 	sta	RumbleSpot
 	plx
+exitr2:
 	plb
 	rtl
 
@@ -7417,6 +7421,7 @@ SetRumbleStuff3:
 	pha
 	plb
 	lda SPCIO3
+	beq exitr3
 	phx
 	asl a
 	tax
@@ -7429,6 +7434,7 @@ SetRumbleStuff3:
 	lda #1
 	sta	RumbleSpot
 	plx
+exitr3:
 	plb
 	rtl
 
@@ -7488,12 +7494,7 @@ SFXJumpTable3:
 
 
 
-exitrumble:
-	
-	plx
-	rtl
-	
-	
+
 GenTileFromSpr2:
     STA.B Map16TileGenerate                   ; $9C = tile to generate
     LDA.B SpriteXPosLow,X                     ; \ $9A = Sprite X position + #$08

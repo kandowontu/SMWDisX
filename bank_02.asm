@@ -3859,16 +3859,22 @@ DATA_029D5E:
     db $03,$02,$03,$02,$03,$02,$01,$00
 
 RumbleRead:
-    LDA.B RumbleSpot
-	BEQ rumbleOff
-;    DEC.B RumbleTime
-    BRA continue
 
-rumbleOff:
-    STZ.B RumbleStrength		;21
-
-continue:
+	ldy.b RumbleSpot
+	bne continuerumb
+	rtl
+continuerumb:
+	dey
+	lda [$60],y
+	cmp #$FE
+	bne continuerumb2
+	stz.b RumbleSpot
+	rtl
+continuerumb2:
     ; HACK: apparently this is needed to work on hardware?
+	iny
+	iny
+	sty.b RumbleSpot
     LDA #$01 
 	STA $4016
     NOP
