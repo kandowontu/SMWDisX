@@ -2626,8 +2626,15 @@ GM03LoadTitleScreen:                          ; Game Mode 03 - Load Title Screen
     LDA.W OverworldOverride
     BNE +
     JSR UploadMusicBank1
+	JSR ControllerUpdate
+	lda.b byetudlrHold		;check variable for up/down/left/right/b/y/start/select
+	and.b #!DpadUp			;if up is held, do nothing
+	bne nobgmthx
+
     LDA.B #!BGM_TITLESCREEN                   ;\ Set title screen music
     STA.W SPCIO2                              ;/
+
+nobgmthx:
   + LDA.B #!MainMapLvls+!TitleScreenLevel
     LDY.B #0
 CODE_0096CF:
@@ -3122,6 +3129,7 @@ HandleSelectionCursor:
     BRA .ResetCursorPos
 
 .CheckMovement:
+	jsl	SFXTESTHOOK
     PLA                                       ;\ Eat up last return address
     PLA                                       ;/ (We don't advance game mode)
     LDA.B byetudlrFrame                       ;\
@@ -3575,11 +3583,17 @@ ChangeBackgroundColor:
     SEP #$20                                  ; A->8
     RTS
 
+DrawFileSelect_l:
+	jsr DrawFileSelect
+	rtl
+
 if ver_is_japanese(!_VER)                     ;\======================== J ====================
 EraseFileTiles:                               ;!
     db $D4,$31,$FC,$38,$9D,$31,$FC,$38        ;!\ append "okesu" to files (erase)
     db $8D,$31,$FC,$38,$FC,$38,$FC,$38        ;!/ or blank tiles
-                                              ;!
+               
+
+			   ;!
 DrawFileSelect:                               ;!
 DrawEraseFirstTime:                           ;!
     STZ.B _5                                  ;! Don't erase any files
@@ -3627,7 +3641,10 @@ DrawFileExitCount:                            ;!
     BCS .EmptyFile                            ;!/ show it as empty
     JSR VerifySaveFile                        ;!\ If this file is corrupted
     BNE .EmptyFile                            ;!/ show it as empty
+    LDA SoundTestNumber0                 ;!
+	bne	.doner
     LDA.L SaveDataExitCount,X                 ;!
+.doner:
     SEP #$10                                  ;! XY->8
 if ver_is_english(!_VER)                      ;!\=================== U, E0, & E1 ==============
     CMP.B #!TotalExitCount                    ;!! If all the exits are collected

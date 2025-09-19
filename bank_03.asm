@@ -7325,6 +7325,92 @@ BooBossPals:
 
 
 
+SFXTESTHOOK:
+
+		lda.b XYLRButtonHeld		;load my new held buttons variable
+		beq ClearToContinue			;if its not set to 1, nothing is held and we can run the new sfx test code's button checker
+
+		lda.b byetudlrHold			;if its 1, load the variable to check for Y
+		and.b #!ButY					;explicitly check for Y
+		bne exitsfxtest				;if its not 0 (Y is held), exit sfx test
+
+		lda.b axlr0000Hold			;if it is 0, now we check the variable for A/X/L/R
+		and.b #!ButX|!ButL|!ButR	;explicitly check for X/L/R
+		bne	exitsfxtest				;if anything is held, exit the sfx test
+		
+		stz.b XYLRButtonHeld			;if all clear, zero the held buttons variable for the sfx test
+		rtl							;exit to skip a frame (probably not needed)
+
+
+ClearToContinue:
+		lda.b byetudlrHold		;check variable for up/down/left/right/b/y/start/select
+		and.b #!DpadUp			;if up is not held, do nothing
+		beq	exitsfxtest
+		
+	    LDA.B #0                   ;\ Fade out bgm
+		STA.W SPCIO2                              ;/
+
+		lda.b axlr0000Hold		;check the variable for X/A/L/R
+		and.b #!ButR			;check explicitly for R
+		beq NoR					;if its 0, R is not held; skip to the next button check
+	
+		lda SoundTestNumber0
+		beq nofade1									;if you are at sfx test 0, fade the music before the inc
+	    LDA.B #!BGM_FADEOUT                       ;\ Fade music
+		STA.W SPCIO2                              ;/
+nofade1:
+		inc.b SoundTestNumber0	;otherwise, R is held, increase SoundTestNumber0
+		lda.b #$01
+		sta.b XYLRButtonHeld	;set variable that says a button was pressed/held, and to not process until released
+		jsl	DrawFileSelect_l
+		rtl						;exit
+		
+NoR:
+
+		lda.b axlr0000Hold		;check the variable for X/A/L/R
+		and.b #!ButL			;check explicitly for L
+		beq NoL					;if its 0, L is not held; skip to the next button check
+	
+		lda.b SoundTestNumber0	;dont go lower than 0
+		beq nodecthx			;so, exit if its 0
+		dec.b SoundTestNumber0	;otherwise, L is held, decrease SoundTestNumber0
+nodecthx:
+		lda.b #$01
+		sta.b XYLRButtonHeld	;set variable that says a button was pressed/held, and to not process until released
+		jsl	DrawFileSelect_l
+		
+		rtl						;exit
+		
+NoL:		
+
+		lda.b axlr0000Hold		;check the variable for X/A/L/R
+		and.b #!ButX			;check explicitly for X		
+		beq	NoX
+		
+		lda.b SoundTestNumber0	;load the current sound test number
+		sta SPCIO3				;store it to sound channel 3
+		lda.b #$01				;set button held status to 1
+		sta.b XYLRButtonHeld
+		rtl
+		
+NoX:		
+
+		lda.b byetudlrHold		;check variable for up/down/left/right/b/y/start/select
+		and.b #!ButY			;check explicitly for Y	
+		beq	NoY
+		
+		lda.b SoundTestNumber0	;load the current sound test number
+		sta SPCIO0				;store it to sound channel 0
+		lda.b #$01				;set button held status to 1
+		sta.b XYLRButtonHeld
+		rtl
+		
+NoY:		
+		
+exitsfxtest:
+		RTL
+		
+
 
 
 
@@ -7332,21 +7418,64 @@ mushroomrumble:
 	db $01, $01, $02, $02, $13, $13, $24, $24, $33, $33, $42, $42, $31, $31, $20, $20, $10, $10, $00, $00, $01, $01, $02, $02, $13, $13, $24, $24, $33, $33, $42, $42, $31, $31, $20, $20, $10, $10, $00, $00, $01, $01, $02, $02, $13, $13, $24, $24, $33, $33, $42, $42, $31, $31, $20, $20, $10, $10, $FE
 
 piperumble:
-	db $10, $10, $20, $20, $31, $42, $33, $24, $24, $13, $13, $02, $02, $01, $01, $00, $00, $10, $10, $20, $20, $31, $42, $33, $24, $24, $13, $13, $02, $02, $01, $01, $00, $00, $10, $10, $20, $20, $31, $42, $33, $24, $24, $13, $13, $02, $02, $01, $01, $FE
+	db $10, $10, $20, $20, $31, $31, $42, $42, $33, $33, $24, $24, $13, $13, $02, $02, $01, $01, $00, $00, $10, $10, $20, $20, $31, $31, $42, $42, $33, $33, $24, $24, $13, $13, $02, $02, $01, $01, $00, $00, $10, $10, $20, $20, $31, $31, $42, $42, $33, $33, $24, $24, $13, $13, $02, $02, $01, $01, $FE
 
 dragoncoinrumble:
 	db $11, $11, $22, $22, $33, $44, $00, $11, $11, $22, $22, $33, $44, $FE
 	
+oneuprumble:
+	db $11, $11, $22, $22, $33, $44, $00, $11, $11, $22, $22, $33, $44, $00, $11, $11, $22, $22, $33, $44, $FE
+	
 itemblockrumble:
 	db $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $00, $00, $22, $22, $33, $33, $FE
 
+fuserumble:
+	db $01, $12, $22, $21, $10, $00, $00, $EF	;repeat until bomb
 
+bombrumble:
+	db $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FF, $55, $00, $FE
 
 QuickRumble:
-	db $11, $22, $33, $44, $44, $33, $22, $11, $FE
+	db $22, $33, $44, $55, $44, $33, $22, $FE
+
+MidwayRumble:
+	db $01, $02, $03, $04, $05, $06, $07, $08, $09, $0A, $0B, $0C, $0D, $0E, $0F, $1F, $2F, $3F, $4F, $5F, $6F, $7F, $8F, $9F, $AF, $BF, $CF, $DF, $FF, $FD, $FC, $FB, $FA, $F9, $F8, $F7, $F6, $F5, $F4, $F3, $F2, $F1, $F0, $E0, $D0, $C0, $B0, $A0, $90, $80, $70, $60, $50, $40, $30, $20, $10, $FE
 
 DefaultRumble:
-	db $11, $11, $22, $33, $33, $33, $44, $44, $33, $33, $22, $22, $11, $11, $FE
+	db $11, $11, $22, $33, $33, $44, $44, $33, $33, $22, $22, $11, $11, $FE
+
+SpinyRumble:
+	db $55, $55, $66, $66, $66, $88, $88, $66, $66, $66, $66, $55, $55, $00, $00, $00, $00, $00, $00, $00, $55, $55, $00, $00, $99, $99, $99, $00, $00, $55, $55, $55, $FE
+
+StrongRumble:
+	db $99, $AA, $BB, $CC, $CC, $DD, $DD, $CC, $CC, $BB, $BB, $AA, $AA, $FE
+
+YoshiRumble:
+	db $11, $33, $55, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $00, $00, $00, $11, $33, $55, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $FE
+
+caperumble:
+	db $10, $20, $30, $40, $41, $42, $43, $44, $00, $00, $01, $02, $03, $04, $14, $24, $34, $44, $01, $02, $03, $04, $14, $24, $34, $44, $FE
+
+Fireball:
+	db $10, $20, $30, $40, $01, $02, $03, $04, $10, $20, $30, $40, $01, $02, $03, $04, $10, $20, $30, $40, $01, $02, $03, $04, $FE
+
+vinerumble:
+	db $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $22, $44, $66, $88, $AA, $00, $00, $FE
+
+bonesrumble:
+	db $77, $77, $77, $00, $00, $00, $66, $66, $00, $00, $00, $55, $55, $00, $44, $44, $00, $33, $33, $00, $22, $22, $FE
+
+switchrumble:
+	db $11, $33, $55, $77, $99, $00, $00, $00, $11, $33, $55, $77, $99, $00, $00, $00, $11, $33, $55, $77, $99, $FE
+
+FeatherRumble:
+	db $03, $05, $07, $0A, $0F, $00, $00, $00, $00, $00, $30, $50, $70, $A0, $F0, $00, $00, $00, $00, $00, $03, $05, $07, $0A, $0F, $00, $00, $00, $00, $00, $30, $50, $70, $A0, $F0, $00, $00, $00, $00, $00, $03, $05, $07, $0A, $0F, $00, $00, $00, $00, $00, $30, $50, $70, $A0, $F0, $FE
+
+GrinderRumble: 
+	db $10, $20, $30, $40, $41, $42, $43, $44, $00, $00, $01, $02, $03, $04, $14, $24, $34, $44, $FE
+
+RumblingOn:
+	db $F0, $F0, $00, $00, $00, $0F, $0F, $00, $00, $00, $EF
 
 exitrumble:
 	db $FE
@@ -7361,6 +7490,8 @@ SetRumbleStuff2:
 	pha
 	plb
 	lda SPCIO0
+	beq exitr2
+	cmp #$FF
 	beq exitr2
 	phx
 	asl a
@@ -7381,22 +7512,22 @@ exitr2:
 
 SFXJumpTable2:
 	dw	exitrumble		;0 no sfx
-	dw	DefaultRumble		;SFX_BONK = 1
-	dw	exitrumble		;SFX_SPLAT = 2
+	dw	QuickRumble		;SFX_BONK = 1
+	dw	DefaultRumble		;SFX_SPLAT = 2
 	dw	DefaultRumble		;SFX_KICK = 3
 	dw	piperumble		;SFX_PIPE = 4
-	dw	exitrumble		;SFX_MIDWAY = 5
-	dw	QuickRumble		;SFX_GULP = 6
-	dw	exitrumble		;SFX_BONES = 7
-	dw	exitrumble		;SFX_SPINKILL = 8
-	dw	exitrumble		;SFX_CAPE = 9
+	dw	MidwayRumble		;SFX_MIDWAY = 5
+	dw	DefaultRumble		;SFX_GULP = 6
+	dw	bonesrumble		;SFX_BONES = 7
+	dw	SpinyRumble		;SFX_SPINKILL = 8
+	dw	caperumble		;SFX_CAPE = 9
 	dw	mushroomrumble		;SFX_MUSHROOM = 10
-	dw	exitrumble		;SFX_SWITCH = 11
-	dw	exitrumble		;SFX_ITEMGOAL = 12
-	dw	exitrumble		;SFX_FEATHER = 13
+	dw	switchrumble		;SFX_SWITCH = 11
+	dw	exitrumble		;SFX_ITEMGOAL = 12   do
+	dw	FeatherRumble		;SFX_FEATHER = 13
 	dw	exitrumble		;SFX_SWIM = 14
-	dw	exitrumble		;SFX_FLYHIT = 15
-	dw	exitrumble		;SFX_MAGIC = 16
+	dw	exitrumble		;SFX_FLYHIT = 15 do
+	dw	exitrumble		;SFX_MAGIC = 16 do
 	dw	exitrumble		;SFX_PAUSE = 17
 	dw	exitrumble		;SFX_UNPAUSE = 18
 	dw	DefaultRumble		;SFX_STOMP1 = 19
@@ -7406,21 +7537,22 @@ SFXJumpTable2:
 	dw	DefaultRumble		;SFX_STOMP5 = 23
 	dw	DefaultRumble		;SFX_STOMP6 = 24
 	dw	DefaultRumble		;SFX_STOMP7 = 25
-	dw	exitrumble		;SFX_GRINDER = 26
-	dw	exitrumble		;nothing?? = 27
-	dw	dragoncoinrumble		;SFX_DRAGONCOIN = 28		;not working?!
+	dw	GrinderRumble		;SFX_GRINDER = 26
+	dw	GrinderRumble		;SFX_GRINDER?? = 27
+	dw	dragoncoinrumble		;SFX_DRAGONCOIN = 28
+	dw	exitrumble		;nothing = 29
 	dw	exitrumble		;SFX_PBALLOON = 30
 	dw	exitrumble		;SFX_BOSSDEAD = 31
 	dw	QuickRumble		;SFX_SPIT = 32
-	dw	exitrumble		;SFX_RUMBLINGON = 33
+	dw	RumblingOn		;SFX_RUMBLINGON = 33
 	dw	exitrumble		;SFX_RUMBLINGOFF = 34
 	dw	exitrumble		;SFX_FALL = 35
 	dw	exitrumble		;SFX_NOTICEMESENPAI = 36 ; unused sfx that doesn't actually exist
-	dw	exitrumble		;SFX_BLARGG = 37
-	dw	exitrumble		;SFX_FIREWORKFIRE1 = 38
-	dw	exitrumble		;SFX_FIREWORKBANG1 = 39
-	dw	exitrumble		;SFX_FIREWORKFIRE2 = 40
-	dw	exitrumble		;SFX_FIREWORKBANG2 = 41
+	dw	exitrumble		;SFX_BLARGG = 37  do
+	dw	StrongRumble		;SFX_FIREWORKFIRE1 = 38
+	dw	StrongRumble		;SFX_FIREWORKBANG1 = 39
+	dw	StrongRumble		;SFX_FIREWORKFIRE2 = 40
+	dw	StrongRumble		;SFX_FIREWORKBANG2 = 41
 	dw	exitrumble		;SFX_PEACHHELP = 42
 
 
@@ -7446,6 +7578,10 @@ SetRumbleStuff3:
 	beq exitr3
 	cmp #14
 	beq exitr3
+	cmp #33
+	beq exitr3
+	cmp #36
+	beq exitr3
 	phx
 	asl a
 	tax
@@ -7465,56 +7601,58 @@ exitr3:
 
 SFXJumpTable3:
 	dw	exitrumble		;0 no sfx
-	dw	exitrumble		;SFX_COIN = 1
+	dw	QuickRumble		;SFX_COIN = 1
 	dw	itemblockrumble		;SFX_ITEMBLOCK = 2
-	dw	exitrumble		;SFX_VINEBLOCK = 3
+	dw	vinerumble		;SFX_VINEBLOCK = 3
 	dw	exitrumble		;SFX_SPIN = 4
-	dw	exitrumble		;SFX_1UP = 5
-	dw	QuickRumble		;SFX_FIREBALL = 6
-	dw	exitrumble		;SFX_SHATTER = 7
+	dw	oneuprumble		;SFX_1UP = 5
+	dw	Fireball		;SFX_FIREBALL = 6
+	dw	StrongRumble		;SFX_SHATTER = 7
 	dw	exitrumble		;SFX_SPRING = 8
-	dw	exitrumble		;SFX_KAPOW = 9
-	dw	exitrumble		;SFX_EGGHATCH = 10
+	dw	StrongRumble		;SFX_KAPOW = 9
+	dw	DefaultRumble		;SFX_EGGHATCH = 10
 	dw	exitrumble		;SFX_ITEMRESERVED = 11	;skipped
 	dw	exitrumble		;SFX_ITEMDEPLOYED = 12	;skipped
-	dw	exitrumble		;nothing? = 13	;skipped
+	dw	exitrumble		;nothing? = 13
 	dw	exitrumble		;SFX_SCREENSCROLL = 14	;skipped
 	dw	exitrumble		;SFX_DOOROPEN = 15
 	dw	exitrumble		;SFX_DOORCLOSE = 16
 	dw	exitrumble		;SFX_DRUMROLLSTART = 17
 	dw	exitrumble		;SFX_DRUMROLLEND = 18
-	dw	exitrumble		;SFX_YOSHIHURT = 19
-	dw	exitrumble		;SFX_NEWLEVEL = 21
-	dw	exitrumble		;SFX_CASTLECRUSH = 22
-	dw	exitrumble		;SFX_FIRESPIT = 23
+	dw	StrongRumble		;SFX_YOSHIHURT = 19
+	dw	exitrumble		;nothing?? = 20
+	dw	StrongRumble		;SFX_NEWLEVEL = 21
+	dw	StrongRumble		;SFX_CASTLECRUSH = 22
+	dw	Fireball		;SFX_FIRESPIT = 23
 	dw	exitrumble		;SFX_THUNDER = 24
-	dw	exitrumble		;SFX_CLAP = 25
-	dw	exitrumble		;SFX_CUTSCENEBOMB = 26
-	dw	exitrumble		;SFX_CUTSCENEFUSE = 27
+	dw	QuickRumble		;SFX_CLAP = 25
+	dw	bombrumble		;SFX_CUTSCENEBOMB = 26
+	dw	fuserumble		;SFX_CUTSCENEFUSE = 27
 	dw	exitrumble		;SFX_SWITCHBLOCK = 28
+	dw	exitrumble		;nothing? = 29
 	dw	exitrumble		;SFX_WHISTLE = 30
-	dw	exitrumble		;SFX_YOSHI = 31
+	dw	YoshiRumble		;SFX_YOSHI = 31
 	dw	exitrumble		;SFX_BOSSINLAVA = 32
-	dw	exitrumble		;SFX_YOSHITONGUE = 33
-	dw	exitrumble		;SFX_MESSAGE = 34
-	dw	exitrumble		;SFX_BEEP = 35
+	dw	exitrumble		;SFX_YOSHITONGUE = 33	;skip
+	dw	oneuprumble		;SFX_MESSAGE = 34
+	dw	QuickRumble		;SFX_BEEP = 35
 	dw	exitrumble		;SFX_RUNNINGOUT = 36
-	dw	exitrumble		;SFX_YOSHISTOMP = 37
+	dw	StrongRumble		;SFX_YOSHISTOMP = 37
 	dw	exitrumble		;SFX_SWOOPER = 38
 	dw	exitrumble		;SFX_PODOBOO = 39
 	dw	exitrumble		;SFX_ENEMYHURT = 40
 	dw	exitrumble		;SFX_CORRECT = 41
 	dw	exitrumble		;SFX_WRONG = 42
-	dw	exitrumble		;SFX_FIREWORKFIRE3 = 43
-	dw	exitrumble		;SFX_FIREWORKBANG3 = 44
-	dw	exitrumble		;SFX_BOWSERFIRE1 = 45
-	dw	exitrumble		;SFX_BOWSERFIRE2 = 46
-	dw	exitrumble		;SFX_BOWSERFIRE3 = 47
-	dw	exitrumble		;SFX_BOWSERFIRE4 = 48
-	dw	exitrumble		;SFX_BOWSERFIRE5 = 49
-	dw	exitrumble		;SFX_BOWSERFIRE6 = 50
-	dw	exitrumble		;SFX_BOWSERFIRE7 = 51
-	dw	exitrumble		;SFX_BOWSERFIRE8 = 52
+	dw	StrongRumble		;SFX_FIREWORKFIRE3 = 43
+	dw	StrongRumble		;SFX_FIREWORKBANG3 = 44
+	dw	StrongRumble		;SFX_BOWSERFIRE1 = 45
+	dw	StrongRumble		;SFX_BOWSERFIRE2 = 46
+	dw	StrongRumble		;SFX_BOWSERFIRE3 = 47
+	dw	StrongRumble		;SFX_BOWSERFIRE4 = 48
+	dw	StrongRumble		;SFX_BOWSERFIRE5 = 49
+	dw	StrongRumble		;SFX_BOWSERFIRE6 = 50
+	dw	StrongRumble		;SFX_BOWSERFIRE7 = 51
+	dw	StrongRumble		;SFX_BOWSERFIRE8 = 52
 
 
 

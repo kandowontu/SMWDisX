@@ -456,7 +456,7 @@ LevelLoadPos: skip 1
 ; === $7E0058 ===
 ; 1 byte
 ; unused
-WRAM_0058: skip 1
+SoundTestNumber0: skip 1
 
 ; === $7E0059 ===
 ; 1 byte
@@ -486,7 +486,7 @@ ScreenMode: skip 1
 ; === $7E005C ===
 ; 1 byte
 ; unused
-WRAM_005C: skip 1
+SoundTestNumber3: skip 1
 
 ; === $7E005D ===
 ; 1 byte
@@ -1341,7 +1341,7 @@ IRQNMICommand: skip 1
 ; === $7E0D9C ===
 ; 1 byte
 ; unused
-WRAM_0D9C: skip 1
+XYLRButtonHeld: skip 1
 
 
 ThroughMain: skip 1

@@ -3863,7 +3863,7 @@ RumbleRead:
 	ldy.b RumbleSpot		;load rumble position pointer
 	bne continuerumb		;if its not 0, continue to continuerumb
 	stz.b RumbleStrength		;otherwise, zero rumble strength
-	bra	continuerumb3		;continue stuff
+	bra	continuerumb4		;continue stuff
 continuerumb:				;if it was not 0, we do this
 	dey						;decrease y
 	lda [$60],y				;load the value
@@ -3871,15 +3871,20 @@ continuerumb:				;if it was not 0, we do this
 	bne continuerumb2		
 	stz.b RumbleSpot		;if it IS fe, we zero the position pointer
 	stz.b RumbleStrength		;we zero the strength
-	bra continuerumb3		;and we proceed to turn off the motors
+	bra continuerumb4		;and we proceed to turn off the motors
 ;	rtl
 continuerumb2:				;if it wasn't fe, we:
+	cmp #$EF				;check if its EF. if its not EF, go to continuerumb3
+	bne	continuerumb3		
+	ldy #$1					;if it IS EF, set the pointer back to 1 and start the process over again
+	bra continuerumb
+continuerumb3:				;if not, continuing here...
 	sta	RumbleStrength		;store the strength
 	iny
 	iny
 	sty.b RumbleSpot			;increase pointer position
 	
-continuerumb3:
+continuerumb4:
     ; HACK: apparently this is needed to work on hardware?
     LDA #$01 
 	STA $4016
