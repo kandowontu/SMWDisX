@@ -7354,11 +7354,6 @@ ClearToContinue:
 		and.b #!ButR			;check explicitly for R
 		beq NoR					;if its 0, R is not held; skip to the next button check
 	
-		lda SoundTestNumber0
-		beq nofade1									;if you are at sfx test 0, fade the music before the inc
-	    LDA.B #!BGM_FADEOUT                       ;\ Fade music
-		STA.W SPCIO2                              ;/
-nofade1:
 		inc.b SoundTestNumber0	;otherwise, R is held, increase SoundTestNumber0
 		lda.b #$01
 		sta.b XYLRButtonHeld	;set variable that says a button was pressed/held, and to not process until released
