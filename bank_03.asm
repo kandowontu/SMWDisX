@@ -7457,7 +7457,7 @@ StrongRumble:
 	db $99, $AA, $BB, $CC, $CC, $DD, $DD, $CC, $CC, $BB, $BB, $AA, $AA, $FE
 
 YoshiRumble:
-	db $11, $33, $55, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $00, $00, $00, $11, $33, $55, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $77, $FE
+	db $11, $33, $55, $77, $77, $77, $77, $77,$00, $00, $00, $11, $33, $55, $55, $55, $55, $55, $FE
 
 caperumble:
 	db $10, $20, $30, $40, $41, $42, $43, $44, $00, $00, $01, $02, $03, $04, $14, $24, $34, $44, $01, $02, $03, $04, $14, $24, $34, $44, $FE
@@ -7492,6 +7492,27 @@ RumblingOn:
 FlyHitRumble:
 	db $55, $55, $66, $77, $88, $88, $88, $00, $00, $00, $00, $55, $55, $66, $77, $88, $88, $88, $00, $00, $00, $00, $55, $55, $66, $77, $88, $88, $88, $FE
 	
+BossDieRumble:
+	db $F0, $F0, $F0, $F0, $F0, $F0, $F0, $F0, $F0, $F0, $00, $00, $00, $00, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $00, $00, $00, $00, $00, $F0, $F0, $F0, $F0, $00, $00, $00, $00, $F0, $F0, $F0, $F0, $00, $00, $00, $00, $0F, $0F, $0F, $0F, $0F, $0F, $00, $00, $00, $00, $F0, $F0, $F0, $F0, $00, $00, $00, $00, $0F, $0F, $0F, $0F, $0F, $0F, $00, $00, $00, $00, $F0, $F0, $F0, $F0, $00, $00, $00, $00, $0F, $0F, $0F, $0F, $0F, $0F, $FE
+	
+BossInFireRumble:
+	db $FF, $FF, $FF, $FF, $FF, $FF, $00, $00, $00, $00, $AA, $AA, $AA, $AA, $AA, $AA, $00, $00, $00, $00, $77, $77, $77, $77, $77, $77, $00, $00, $00, $00, $44, $44, $44, $44, $44, $44, $00, $00, $00, $00, $11, $11, $11, $11, $11, $11, $FE
+
+LeftFire:
+	db $09, $0A, $0B, $0C, $0C, $0D, $0D, $0C, $0C, $0B, $0B, $0A, $0A, $FE
+
+RightFire:
+	db $90, $A0, $B0, $C0, $C0, $D0, $D0, $C0, $C0, $B0, $B0, $A0, $A0, $FE
+	
+LeftishFire:
+	db $49, $5A, $6B, $7C, $7C, $8D, $8D, $7C, $7C, $6B, $6B, $5A, $5A, $FE
+
+RightishFire:
+	db $94, $A5, $B6, $C7, $C7, $D8, $D8, $C7, $C7, $B6, $B6, $A5, $A5, $FE
+
+DrumrollRumble:
+	db $33, $33, $33, $33, $00, $00, $00, $00, $EF
+
 exitrumble:
 	db $FE
 	
@@ -7569,7 +7590,7 @@ SFXJumpTable2:			;channel 0
 	dw	MidwayRumble		;SFX_MIDWAY = 5
 	dw	DefaultRumble		;SFX_GULP = 6
 	dw	bonesrumble		;SFX_BONES = 7
-	dw	SpinyRumble		;SFX_SPINKILL = 8
+	dw	DefaultRumble		;SFX_SPINKILL = 8
 	dw	caperumble		;SFX_CAPE = 9
 	dw	mushroomrumble		;SFX_MUSHROOM = 10
 	dw	switchrumble		;SFX_SWITCH = 11
@@ -7592,7 +7613,7 @@ SFXJumpTable2:			;channel 0
 	dw	dragoncoinrumble		;SFX_DRAGONCOIN = 28
 	dw	exitrumble		;nothing = 29
 	dw	exitrumble		;SFX_PBALLOON = 30
-	dw	exitrumble		;SFX_BOSSDEAD = 31
+	dw	BossDieRumble		;SFX_BOSSDEAD = 31
 	dw	QuickRumble		;SFX_SPIT = 32
 	dw	RumblingOn		;SFX_RUMBLINGON = 33
 	dw	exitrumble		;SFX_RUMBLINGOFF = 34
@@ -7624,11 +7645,11 @@ SFXJumpTable3:			;channel 3
 	dw	exitrumble		;SFX_SCREENSCROLL = 14	;skipped
 	dw	exitrumble		;SFX_DOOROPEN = 15
 	dw	exitrumble		;SFX_DOORCLOSE = 16
-	dw	exitrumble		;SFX_DRUMROLLSTART = 17
+	dw	DrumrollRumble		;SFX_DRUMROLLSTART = 17
 	dw	exitrumble		;SFX_DRUMROLLEND = 18
 	dw	StrongRumble		;SFX_YOSHIHURT = 19
 	dw	exitrumble		;nothing?? = 20
-	dw	StrongRumble		;SFX_NEWLEVEL = 21
+	dw	QuickRumble		;SFX_NEWLEVEL = 21
 	dw	StrongRumble		;SFX_CASTLECRUSH = 22
 	dw	Fireball		;SFX_FIRESPIT = 23
 	dw	exitrumble		;SFX_THUNDER = 24
@@ -7639,7 +7660,7 @@ SFXJumpTable3:			;channel 3
 	dw	exitrumble		;nothing? = 29
 	dw	exitrumble		;SFX_WHISTLE = 30
 	dw	YoshiRumble		;SFX_YOSHI = 31
-	dw	exitrumble		;SFX_BOSSINLAVA = 32
+	dw	BossInFireRumble		;SFX_BOSSINLAVA = 32
 	dw	exitrumble		;SFX_YOSHITONGUE = 33	;skip
 	dw	oneuprumble		;SFX_MESSAGE = 34
 	dw	QuickRumble		;SFX_BEEP = 35
@@ -7652,14 +7673,14 @@ SFXJumpTable3:			;channel 3
 	dw	exitrumble		;SFX_WRONG = 42
 	dw	StrongRumble		;SFX_FIREWORKFIRE3 = 43
 	dw	StrongRumble		;SFX_FIREWORKBANG3 = 44
-	dw	StrongRumble		;SFX_BOWSERFIRE1 = 45
-	dw	StrongRumble		;SFX_BOWSERFIRE2 = 46
-	dw	StrongRumble		;SFX_BOWSERFIRE3 = 47
-	dw	DefaultRumble		;SFX_BOWSERFIRE4 = 48
-	dw	DefaultRumble		;SFX_BOWSERFIRE5 = 49
-	dw	DefaultRumble		;SFX_BOWSERFIRE6 = 50
-	dw	DefaultRumble		;SFX_BOWSERFIRE7 = 51
-	dw	QuickRumble		;SFX_BOWSERFIRE8 = 52
+	dw	LeftFire		;SFX_BOWSERFIRE1 = 45
+	dw	LeftFire		;SFX_BOWSERFIRE2 = 46
+	dw	LeftishFire		;SFX_BOWSERFIRE3 = 47
+	dw	StrongRumble		;SFX_BOWSERFIRE4 = 48
+	dw	StrongRumble		;SFX_BOWSERFIRE5 = 49
+	dw	RightishFire		;SFX_BOWSERFIRE6 = 50
+	dw	RightFire		;SFX_BOWSERFIRE7 = 51
+	dw	RightFire		;SFX_BOWSERFIRE8 = 52
 
 
 
